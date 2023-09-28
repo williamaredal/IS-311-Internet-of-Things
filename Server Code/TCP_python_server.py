@@ -3,7 +3,7 @@ import struct
 
 
 # Define the IP address and port to listen on
-host = '172.20.10.3'  # Replace with the actual IP address of your Mac
+host = ''  # Replace with the actual IP address of your Mac (use 'ifconfic' in the terminal, and find the ip under 'en0')
 port = 12345  # Replace with the desired port number
 
 # Create a socket object
@@ -16,7 +16,7 @@ server_socket.bind((host, port))
 server_socket.listen(1)
 
 print(f"Listening for incoming connections on {host}:{port}")
- 
+
 while True:
     # Accept incoming connection
     client_socket, client_address = server_socket.accept()
@@ -33,15 +33,18 @@ while True:
 
     mic_data = client_socket.recv(4)
 
-    gps_lat_data = client_socket.recv(4)
-    gps_long_data  = client_socket.recv(4)
-    gps_velocity_data = client_socket.recv(4)
-    gps_sattelites = client_socket.recv(4)
+    lat_bytes = client_socket.recv(8)
+    long_bytes = client_socket.recv(8)
+    alt_bytes = client_socket.recv(8)
+    course_bytes = client_socket.recv(8)
+    speed_bytes = client_socket.recv(8)
+    sat_bytes = client_socket.recv(4)
 
     if (
         len(x_data) == len(y_data) == len(z_data) == len(gyro_x_data) ==
-        len(gyro_y_data) == len(gyro_z_data) == len(temp_data) == 
-        len(mic_data) == 4
+        len(gyro_y_data) == len(gyro_z_data) == len(temp_data) ==
+        len(mic_data) == len(sat_bytes) == 4 and len(lat_bytes) == len(long_bytes) == len(alt_bytes) == len(course_bytes) ==
+        len(speed_bytes) == 8
     ):
         x = struct.unpack('f', x_data)[0]
         y = struct.unpack('f', y_data)[0]
@@ -50,14 +53,28 @@ while True:
         gyro_y = struct.unpack('f', gyro_y_data)[0]
         gyro_z = struct.unpack('f', gyro_z_data)[0]
         temp = struct.unpack('f', temp_data)[0]
+
         mic = struct.unpack('f', mic_data)[0]
 
+        lat = struct.unpack('d', lat_bytes)[0]
+        long = struct.unpack('d', long_bytes)[0]
+        alt = struct.unpack('d', alt_bytes)[0]
+        course = struct.unpack('d', course_bytes)[0]
+        speed = struct.unpack('d', speed_bytes)[0]
+        sat = struct.unpack('I', sat_bytes)[0]
 
         print(f"Received Acceleration X: {x}, Y: {y}, Z: {z}")
         print(f"Received Gyro X: {gyro_x}, Y: {gyro_y}, Z: {gyro_z}")
         print(f"Received Temperature: {temp}")
+
         print(f"Received Microphone: {mic}")
 
+        print(f"Received Latitude: {lat}")
+        print(f"Received Longitude: {long}")
+        print(f"Received Altitude: {alt}")
+        print(f"Received Course: {course}")
+        print(f"Received Speed: {speed}")
+        print(f"Received Satellites: {sat}")
 
     # Close the client socket
     client_socket.close()
