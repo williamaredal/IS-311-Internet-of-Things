@@ -41,6 +41,7 @@ with open(dataset_name, 'w+', newline='') as csvFile:
     while True:
         # Accept incoming connection
         client_socket, client_address = server_socket.accept()
+        print("-----------------------")
         print(f"Accepted connection from {client_address}")
 
         # Receive and unpack the sensor data
@@ -75,7 +76,7 @@ with open(dataset_name, 'w+', newline='') as csvFile:
             gyro_z = struct.unpack('f', gyro_z_data)[0]
             temp = struct.unpack('f', temp_data)[0]
 
-            mic = struct.unpack('f', mic_data)[0]
+            mic = struct.unpack('I', mic_data)[0]
 
             lat = struct.unpack('d', lat_bytes)[0]
             long = struct.unpack('d', long_bytes)[0]
@@ -83,11 +84,18 @@ with open(dataset_name, 'w+', newline='') as csvFile:
             course = struct.unpack('d', course_bytes)[0]
             speed = struct.unpack('d', speed_bytes)[0]
             sat = struct.unpack('I', sat_bytes)[0]
-            
-            # Writes the data to a new row in the csv file
-            data_row = [x, y, z, gyro_x, gyro_y, gyro_z, temp, mic, lat, long, alt, course, speed, sat]
-            csv_writer.writerow(data_row)
 
+            # Get the current datetime with precision
+            current_datetime = datetime.now().strftime('%d-%m-%Y__%H-%M-%S-%f')
+
+            # Writes the data to a new row in the csv file
+            data_row = [
+                current_datetime,
+                x, y, z, gyro_x, gyro_y, gyro_z, temp,
+                mic,
+                lat, long, alt, course, speed, sat
+            ]
+            csv_writer.writerow(data_row)
 
             print(f"Received Acceleration X: {x}, Y: {y}, Z: {z}")
             print(f"Received Gyro X: {gyro_x}, Y: {gyro_y}, Z: {gyro_z}")
