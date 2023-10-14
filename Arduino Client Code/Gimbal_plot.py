@@ -17,11 +17,6 @@ z_data = dataFrame['Z_DATA']
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 
-# Set labels for the axes
-ax.set_xlabel('Gyro X')
-ax.set_ylabel('Gyro Y')
-ax.set_zlabel('Gyro Z')
-
 
 # Function to update the gyro plot in the animation
 def update_gyro(frame):
