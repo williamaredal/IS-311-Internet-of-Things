@@ -7,7 +7,7 @@ import matplotlib.gridspec as gridspec
 
 
 # Define the IP address and port to listen on
-host = ''  # Replace with the actual IP address of your Mac (use 'ifconfic' in the terminal, and find the ip under 'en0')
+host = '172.20.10.3'  # Replace with the actual IP address of your Mac (use 'ifconfic' in the terminal, and find the ip under 'en0')
 port = 12345  # Replace with the desired port number
 
 # Create a socket object
@@ -149,8 +149,8 @@ with open(dataset_name, 'w+', newline='') as csvFile:
             ax3.bar(2, mic, label='Microphone')
             ax3.bar(3, lat, label='GPS Latitude')
             ax3.bar(4, long, label='GPS Longitude')
-            ax3.bar(5, alt, label='GPS')
-            ax3.bar(6, course, label='GPS')
+            ax3.bar(5, alt, label='GPS Altitude')
+            ax3.bar(6, course, label='GPS Course')
             ax3.bar(7, speed, label='GPS Speed measurement')
             ax3.bar(8, sat, label='Satelite number')
             ax3.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=4)
