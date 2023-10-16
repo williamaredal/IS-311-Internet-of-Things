@@ -104,7 +104,8 @@ void loop() {
   getGps();
 
   if (areValidValues) {
-    printValues();
+    // commented out 'printValues()', only required for debugging
+    //printValues();
     sendData();
   }
 
