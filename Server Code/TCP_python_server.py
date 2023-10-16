@@ -2,6 +2,8 @@ from datetime import datetime
 import csv
 import socket
 import struct
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 
 # Define the IP address and port to listen on
@@ -20,6 +22,24 @@ server_socket.listen(1)
 print(f"Listening for incoming connections on {host}:{port}")
 
 
+# Defines the figure for the data plot animations
+gyro_measurement_limit = 8.7266
+accelerometer_measurement_limit = 10
+
+# 3D plots for data visualization
+fig, axs = plt.subplots(2, 2, figsize=(10, 8))
+fig.suptitle('Real-Time Data Visualization')
+
+# Subplots for gyro and accelerometer data
+ax1 = fig.add_subplot(2, 2, 1, projection='3d')
+ax2 = fig.add_subplot(2, 2, 2, projection='3d')
+
+# Subplot for rest of data
+gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
+ax3 = plt.subplot(gs[1])
+
+
+# Defines the parameters for the dataset filename and column names
 current_datetime = datetime.now().strftime('%d-%m-%Y__%H-%M')
 dataset_name = f'{current_datetime}_dataset.csv'
 column_headers = [
@@ -97,6 +117,50 @@ with open(dataset_name, 'w+', newline='') as csvFile:
             ]
             csv_writer.writerow(data_row)
 
+
+            # Creates the gyro and accelerometer animation
+            ax1.cla()  
+            ax1.set_xlabel('Gyro X')
+            ax1.set_ylabel('Gyro Y')
+            ax1.set_zlabel('Gyro Z')
+            ax1.set_xlim([-gyro_measurement_limit, gyro_measurement_limit])  # X-axis limits
+            ax1.set_ylim([-gyro_measurement_limit, gyro_measurement_limit])  # Y-axis limits
+            ax1.set_zlim([-gyro_measurement_limit, gyro_measurement_limit])  # Z-axis limits
+
+            # Plot the new gyro data as an orientation from 0, 0, 0
+            ax1.plot([0.0, gyro_x], [0.0, gyro_y], [0.0, gyro_z], marker='o', markersize=5)
+
+            ax2.cla()  
+            ax2.set_xlabel('Accelerometer X')
+            ax2.set_ylabel('Accelerometer Y')
+            ax2.set_zlabel('Accelerometer Z')
+            ax2.set_xlim([-accelerometer_measurement_limit, accelerometer_measurement_limit])  # X-axis limits
+            ax2.set_ylim([-accelerometer_measurement_limit, accelerometer_measurement_limit])  # Y-axis limits
+            ax2.set_zlim([-accelerometer_measurement_limit, accelerometer_measurement_limit])  # Z-axis limits
+
+            # Plot the new accelerometer data as an orientation from 0, 0, 0
+            ax2.plot([0.0, x], [0.0, y], [0.0, z], marker='o', markersize=5)
+
+            # Creates the animation for the other data
+            ax3.cla()
+            ax3.set_xlim([-1, 10])  # Y-axis limits
+            ax3.set_ylim([-50, 100])  # Y-axis limits
+            ax3.bar(1, temp, label='Temperature °C')
+            ax3.bar(2, mic, label='Microphone')
+            ax3.bar(3, lat, label='GPS Latitude')
+            ax3.bar(4, long, label='GPS Longitude')
+            ax3.bar(5, alt, label='GPS')
+            ax3.bar(6, course, label='GPS')
+            ax3.bar(7, speed, label='GPS Speed measurement')
+            ax3.bar(8, sat, label='Satelite number')
+            ax3.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), ncol=4)
+
+            # Display the real-time animation
+            plt.pause(0.01) # shows frames with 10 milliseconds in between
+
+
+
+            '''
             print(f"Received Acceleration X: {x}, Y: {y}, Z: {z}")
             print(f"Received Gyro X: {gyro_x}, Y: {gyro_y}, Z: {gyro_z}")
             print(f"Received Temperature: {temp}")
@@ -109,6 +173,7 @@ with open(dataset_name, 'w+', newline='') as csvFile:
             print(f"Received Course: {course}")
             print(f"Received Speed: {speed}")
             print(f"Received Satellites: {sat}")
+            '''
 
         # Close the client socket
         client_socket.close()
