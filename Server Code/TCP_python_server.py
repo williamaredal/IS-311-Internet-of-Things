@@ -36,7 +36,7 @@ ax2 = fig.add_subplot(2, 2, 2, projection='3d')
 
 # Subplot for rest of data
 gs = gridspec.GridSpec(2, 1, height_ratios=[2, 1])
-ax3 = plt.subplot(gs[1])
+ax3 = fig.add_subplot(gs[1])
 
 
 # Defines the parameters for the dataset filename and column names
