@@ -29,6 +29,9 @@ accelerometer_measurement_limit = 10
 # 3D plots for data visualization
 fig, axs = plt.subplots(2, 2, figsize=(10, 8))
 fig.suptitle('Real-Time Data Visualization')
+# Remove the subplots in the second row
+for ax in axs[1, :]:
+    ax.remove()
 
 # Subplots for gyro and accelerometer data
 ax1 = fig.add_subplot(2, 2, 1, projection='3d')
